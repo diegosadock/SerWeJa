@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 
 import br.com.sadocktech.serweja.util.WebConfig;
+import br.com.sadocktech.serweja.util.WebLogger;
 
 public class WebServer {
 
@@ -21,6 +22,7 @@ public class WebServer {
 
 	public WebServer(int port) {
 		try {
+			WebLogger.welcome();
 			this.serverSocket = new ServerSocket(port);
 			System.out.println("SerWeJa initialized on port " + port);
 			System.out.println("Waiting for client requests...");
