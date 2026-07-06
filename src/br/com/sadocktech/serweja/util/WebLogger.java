@@ -24,7 +24,7 @@ public class WebLogger {
 
 	public static void log(String message) {
 		String date = LocalDateTime.now().format(ISIDATE);
-		System.out.printf(YELLOW+"%15s :"+WHITE+"%s\n"+RESET, date, message);
+		System.out.printf(YELLOW+"%15s :"+WHITE+" %s\n"+RESET, date, message);
 	}
 
 }
