@@ -1,10 +1,14 @@
 package br.com.sadocktech.serweja.core;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,8 +68,7 @@ public class WebServer {
 
 				int paramDelimiterIndex = resourcePath.indexOf("?");
 
-				String resourceFile = paramDelimiterIndex == -1
-						? resourcePath
+				String resourceFile = paramDelimiterIndex == -1 ? resourcePath
 						: resourcePath.substring(0, paramDelimiterIndex);
 
 				request.setPath(resourceFile);
@@ -163,6 +166,35 @@ public class WebServer {
 
 			if (Files.exists(requestedPath) && !Files.isDirectory(requestedPath)) {
 				sendFileResponse(response, requestedPath, 200);
+			} else if (WebConfig.appPath.get(request.getPath()) != null) {
+				WebLogger.log("Estamos na parte de executar apps");
+				try {
+					File appDir = new File(WebConfig.APP_ROOT);
+					URL url = appDir.toURI().toURL();
+					WebLogger.log(url.toString());
+					URL urls[] = new URL[] { url };
+
+					URLClassLoader classLoader = new URLClassLoader(urls);
+
+					String className = WebConfig.appPath.get(request.getPath());
+
+					Class<?> classRef = classLoader.loadClass(className);
+					
+					Object instance = classRef.getDeclaredConstructor().newInstance();
+
+					// listando os metadados da classe
+					for (Method m : classRef.getDeclaredMethods()) {
+						response.write("HTTP/1.1 200 OK " + WebConfig.textCodes.get(200) + "\r\n");
+						response.setHeader("Content-Type", "text/html");
+						String res = (String) classRef.getMethod("doGet").invoke(instance);
+						response.setContent(res.getBytes());
+						response.close();
+					}
+					
+				} catch (Exception e) {
+					WebLogger.log("Error loading application: " + e.getMessage());
+					sendNotFoundResponse(response);
+				}
 			} else {
 				sendNotFoundResponse(response);
 			}

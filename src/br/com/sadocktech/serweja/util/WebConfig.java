@@ -5,6 +5,8 @@ import java.util.HashMap;
 public class WebConfig {
 	
 	public static final String DOCUMENT_ROOT = "C:\\Users\\diego\\OneDrive\\Documentos\\serweja";
+	public static final String APP_ROOT = "C:\\Users\\diego\\OneDrive\\Documentos\\serweja-apps";
+	
 	public static HashMap<String, String> content = new HashMap<>() {{
 		put("html", "text/html");
 		put("html", "text/html");
@@ -40,5 +42,11 @@ public class WebConfig {
 		put(501, "Not Implemented");
 		put(502, "Bad Gateway");
 		put(503, "Service Unavailable");
+	}};
+	
+	public static HashMap<String, String> appPath = new HashMap<>() {{
+		put("/appteste", "HelloWorld");
+		put("/apptestepkg", "teste.App");
+		put("/isiflix", "flix.isi.Hello");
 	}};
 }
